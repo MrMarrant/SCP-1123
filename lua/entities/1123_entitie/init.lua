@@ -30,9 +30,9 @@ local TextSmell = {
 	},
 	["en"] = {
 		"There is a smell of burning meat in the air.",
-		"You smell smoke that irritates your eyes."
-		"There is a smell of burnt metal in the air."
-		"There is a smell of rotten meat in the air."
+		"You smell smoke that irritates your eyes.",
+		"There is a smell of burnt metal in the air.",
+		"There is a smell of rotten meat in the air.",
 		"There is a smell of rotting and death in the air."
 	}
 }
@@ -89,7 +89,6 @@ end
 
 -- To play the music when you are close to the client-side entity.
 local function SendMusicNearBy(victim)
-	print(victim)
 	net.Start(MusicNearByNet)
 	net.WriteBool(true)
 	net.Send(victim)
@@ -98,7 +97,7 @@ end
 -- To display the scrolling images on the client side.
 local function HorrorImage(victim)
 	net.Start(ImageToPlayerNet)
-	net.WriteEntity(victim)
+	net.WriteBool(true)
 	net.Send(victim)
 end
 
@@ -110,11 +109,11 @@ local function SendResetScreenClientEffect(victim)
 end
 
 -- Checks if a player is close to the entity, if it moves away, mutes it and displays a message.
-function ENT:NearBy1123(victim, ent)
+function ENT:NearBy1123(victim)
 	timer.Create("near_by_1123_"..victim:SteamID(),( 1 / 100 ),1,function()
 		if !IsValid(victim) then return end
-		if (self:CheckDistance(victim, ent, ent.Range + 10)) then
-			self:NearBy1123(victim, ent)
+		if (self:CheckDistance(victim)) then
+			self:NearBy1123(victim)
 		else
 			victim:StopSound( "scp_1123/screamshorror.mp3" )
 			victim.NearBy_1123 = false
@@ -134,11 +133,11 @@ function ENT:RememberOldPersonality(victim)
 end
 
 -- Return true if the player is close from the entitie.
-function ENT:CheckDistance(ply, ent, distance)
+function ENT:CheckDistance(ply)
 	local tracePly = ply:GetPos()
-	local entsSpherePly = ents.FindInSphere(tracePly, distance)
+	local entsSpherePly = ents.FindInSphere(tracePly, self.Range + 10)
 	for k,v in pairs(entsSpherePly) do
-		if v == ent then
+		if v == self then
 			return true
 		end
 	end
@@ -165,11 +164,10 @@ function ENT:Initialize()
 				if (v.NearBy_1123) then return end
 				if (v.PersonnalityAcquired) then return end
 				v:Say("/me"..TextNearBy[langUser][1])
-				v:Say("/me voit apparaitre une inscription sur le crâne à mesure qu'il s'en approche.") --! TODO : n'apparait pas
 				v:PrintMessage(HUD_PRINTTALK, TextSmell[langUser][self.NextPersonality])
 				v.NearBy_1123 = true
 				SendMusicNearBy(v)
-				self:NearBy1123(v, self)
+				self:NearBy1123(v)
 			end
 		end
 	end)

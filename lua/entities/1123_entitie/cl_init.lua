@@ -22,7 +22,7 @@ local function PlaySoundPersonnality(ply)
         ply:EmitSound("scp_1123/sound_armenian.mp3")
     end
     if(PlayerPersonnality == 2) then
-        ply:EmitSound("scp_1123/speech_juden.mp3")
+        ply:EmitSound("scp_1123/sound_polish.mp3")
     end
     if(PlayerPersonnality == 3) then
         ply:EmitSound("scp_1123/sound_chinese.mp3")
@@ -55,15 +55,18 @@ local function ForeachHorrorImage(ImageObject, ply, i, images)
 end
 
 if CLIENT then
-    print('yo')
     net.Receive(ImageToPlayerNet, function ( )
-        ply = net.ReadEntity()
-        ply:EmitSound("scp_1123/use_1123.wav")
-        ImageObject = vgui.Create("DImage")
-        ImageObject:SetSize(ScrW(), ScrH())
+        local Check = net.ReadBool()
+        local ply = LocalPlayer()
+        if !IsValid(ply) then return end
+        if (Check) then
+            ply:EmitSound("scp_1123/use_1123.wav")
+            ImageObject = vgui.Create("DImage")
+            ImageObject:SetSize(ScrW(), ScrH())
 
-        local images = file.Find("materials/scp_1123/*.jpg", "GAME")
-        ForeachHorrorImage(ImageObject, ply, 1, images)
+            local images = file.Find("materials/scp_1123/*.jpg", "GAME")
+            ForeachHorrorImage(ImageObject, ply, 1, images)
+        end
     end)
 
     net.Receive(PersonnalityNet, function ( )
@@ -71,8 +74,7 @@ if CLIENT then
     end)
 
     net.Receive(MusicNearByNet, function ( )
-        Check = net.ReadBool()
-        print('oui')
+        local Check = net.ReadBool()
         local ply = LocalPlayer()
         if !IsValid(ply) then return end
         if (Check) then
@@ -81,7 +83,7 @@ if CLIENT then
     end)
 
     net.Receive(ResetScreenClientEffect, function ( )
-        Check = net.ReadBool()
+        local Check = net.ReadBool()
         local ply = LocalPlayer()
         if !IsValid(ply) then return end
         if (Check) then

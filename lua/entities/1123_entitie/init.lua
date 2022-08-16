@@ -112,6 +112,7 @@ end
 function ENT:NearBy1123(victim)
 	timer.Create("near_by_1123_"..victim:SteamID(),( 1 / 100 ),1,function()
 		if !IsValid(victim) then return end
+		if !IsValid(self) then return end
 		if (self:CheckDistance(victim)) then
 			self:NearBy1123(victim)
 		else
@@ -158,6 +159,7 @@ function ENT:Initialize()
 	
 	-- Check if a player is close to the entity to play a sound and display a message about the next personality.
 	timer.Create("check_distance_scp1123", 1, 0, function ()
+		if !IsValid(self) then return end
 		for k,v in pairs(ents.FindInSphere(self:GetPos(), self.Range)) do
 			if v:IsPlayer() and v:Alive() then
 				if timer.Exists("new_personality_"..v:SteamID()) then return end
@@ -185,6 +187,12 @@ function ENT:Use( ply )
 	HorrorImage(ply)
 	self:RememberOldPersonality(ply)
 	self.NextPersonality = math.random(1,5)
+end
+
+function ENT:OnRemove()
+	if timer.Exists("check_distance_scp1123") then
+		timer.Remove("check_distance_scp1123")
+	end
 end
 
 -- Function called to remove all effect on death or changed team

@@ -110,11 +110,11 @@ local function SendResetScreenClientEffect(victim)
 end
 
 -- Checks if a player is close to the entity, if it moves away, mutes it and displays a message.
-local function NearBy1123(victim, ent)
+function ENT:NearBy1123(victim, ent)
 	timer.Create("near_by_1123_"..victim:SteamID(),( 1 / 100 ),1,function()
 		if !IsValid(victim) then return end
-		if (ent:CheckDistance(victim, ent, ent.Range + 10)) then
-			NearBy1123(victim, ent)
+		if (self:CheckDistance(victim, ent, ent.Range + 10)) then
+			self:NearBy1123(victim, ent)
 		else
 			victim:StopSound( "scp_1123/screamshorror.mp3" )
 			victim.NearBy_1123 = false
@@ -126,7 +126,7 @@ local function NearBy1123(victim, ent)
 end
 
 -- Timer to show the player after a certain time that he has recovered the memory.
-local function RememberOldPersonality(victim)
+function ENT:RememberOldPersonality(victim)
 	timer.Create("new_personality_"..victim:SteamID(),math.random(180,360),1,function()
 		if !IsValid(victim) then return end
 		victim:Say("/me"..TextOldPersonality[langUser][1])
@@ -169,7 +169,7 @@ function ENT:Initialize()
 				v:PrintMessage(HUD_PRINTTALK, TextSmell[langUser][self.NextPersonality])
 				v.NearBy_1123 = true
 				SendMusicNearBy(v)
-				NearBy1123(v, self)
+				self:NearBy1123(v, self)
 			end
 		end
 	end)
@@ -185,28 +185,28 @@ function ENT:Use( ply )
 	ply:StopSound( "scp_1123/screamshorror.mp3" )
 	SendPersonnalityAcquired(ply)
 	HorrorImage(ply)
-	RememberOldPersonality(ply)
+	self:RememberOldPersonality(ply)
 	self.NextPersonality = math.random(1,5)
 end
 
-	-- Function called to remove all effect on death or changed team
-	function RemoveEffect1123(victim)
-		if timer.Exists("new_personality_"..victim:SteamID()) then
-			timer.Remove("new_personality_"..victim:SteamID())
-		end
-		if timer.Exists("near_by_1123_"..victim:SteamID()) then
-			timer.Remove("near_by_1123_"..victim:SteamID())
-		end
-		victim:StopSound( "scp_1123/speech_juden.mp3" )
-		victim:StopSound( "scp_1123/sound_rwanda.mp3" )
-		victim:StopSound( "scp_1123/sound_armenian.mp3" )
-		victim:StopSound( "scp_1123/sound_chinese.mp3" )
-		victim:StopSound( "scp_1123/sound_cambodge.mp3" )
-		victim:StopSound( "scp_1123/screamshorror.mp3" )
-		victim.PersonnalityAcquired = false
-		victim.NearBy_1123 = false
-		SendResetScreenClientEffect(victim)
+-- Function called to remove all effect on death or changed team
+function RemoveEffect1123(victim)
+	if timer.Exists("new_personality_"..victim:SteamID()) then
+		timer.Remove("new_personality_"..victim:SteamID())
 	end
+	if timer.Exists("near_by_1123_"..victim:SteamID()) then
+		timer.Remove("near_by_1123_"..victim:SteamID())
+	end
+	victim:StopSound( "scp_1123/speech_juden.mp3" )
+	victim:StopSound( "scp_1123/sound_rwanda.mp3" )
+	victim:StopSound( "scp_1123/sound_armenian.mp3" )
+	victim:StopSound( "scp_1123/sound_chinese.mp3" )
+	victim:StopSound( "scp_1123/sound_cambodge.mp3" )
+	victim:StopSound( "scp_1123/screamshorror.mp3" )
+	victim.PersonnalityAcquired = false
+	victim.NearBy_1123 = false
+	SendResetScreenClientEffect(victim)
+end
 
 hook.Add( "PlayerDeath", "remove_effect_1123", RemoveEffect1123 )
 hook.Add( "PlayerChangedTeam", "PlayerChangedTeam_remove_effect_1123", RemoveEffect1123 )

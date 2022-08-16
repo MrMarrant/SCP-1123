@@ -1,10 +1,5 @@
 include("shared.lua")
 
-local ImageToPlayerNet = "ImageToPlayerNet"
-local PersonnalityNet = "PersonnalityNet"
-local MusicNearByNet = "MusicNearByNet"
-local ResetScreenClientEffect = "ResetScreenClientEffect"
-
 local timerImage = 0.08
 local PlayerPersonnality
 local ImageObject

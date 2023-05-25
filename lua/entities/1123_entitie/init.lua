@@ -146,7 +146,7 @@ function ENT:CheckDistance(ply)
 end
 
 function ENT:Initialize()
-	self:SetModel( "models/scp_1123/scp1123.mdl" )
+	self:SetModel( "models/scp_1123/scp_1123_real.mdl" )
 	self:PhysicsInit( SOLID_VPHYSICS ) 
 	self:SetMoveType( MOVETYPE_VPHYSICS ) 
 	self:SetSolid( SOLID_VPHYSICS ) 
